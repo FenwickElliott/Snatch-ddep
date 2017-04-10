@@ -1,4 +1,6 @@
 <h1>Snatch#link</h1>
 <p>Find me in app/views/snatch/link.html.erb</p>
 
-<%= @response %>
+<% if session[:user_id] %>
+    <p> You have sucsessfully linked your spotify account. </p>
+<% end %>
