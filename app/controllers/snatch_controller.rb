@@ -1,4 +1,5 @@
 class SnatchController < ApplicationController
+
   def about
   end
 
@@ -6,5 +7,9 @@ class SnatchController < ApplicationController
   end
 
   def link
+    @response = request.env['omniauth.auth']
+  end
+
+  def fail
   end
 end
