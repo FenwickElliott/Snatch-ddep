@@ -89,11 +89,24 @@ class SnatchController < ApplicationController
       http.request(request)
     end
   end
+
+  def check_through_playlist
+    playlist = JSON.parse RestClient.get("https://api.spotify.com/v1/users/#{session[:user_id]}/playlists/#{session[:p_id]}/tracks", session[:header])
+
+    for i in 0..(playlist['items'].length - 1)
+      if playlist['items'][i]['track']['uri'] === session[:s_uri]
+        puts "That song has already been snatched"
+        return
+      end
+    end
+    actually_snatch
+  end
   
   def snatch
     get_me
     get_song
     check_for_playlist
-    actually_snatch
+    check_through_playlist
+    # actually_snatch
   end
 end
