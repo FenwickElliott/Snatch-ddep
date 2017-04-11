@@ -8,7 +8,8 @@ Rails.application.routes.draw do
   get 'snatch/snatch'
 
   get 'user' => 'snatch#about'
-  put 'user' => 'snatch#options'
+  put 'user' => 'snatch#update'
+  post 'user' => 'snatch#update'
 
   get 'snatch' => 'snatch#snatch'
   get 'options' => 'snatch#options'

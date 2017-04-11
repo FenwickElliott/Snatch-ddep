@@ -1,12 +1,13 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3">
+<div class='container'>
+  <div class='row'>
+    <div class='col-md-4'>
       <h1 class="text-center">Options</h1>
+      
       <%= form_for( current_user, html: { method: :put }) do |f| %>
-        <%#= form_for current_user do |f| %>
         <div class="field">
-          <%= f.label :pnmae %><br />
-          <%= f.text_field :pname, autofocus: true %>
+          Playlist name:
+          <%#= f.label :pnmaer %><br />
+          <%= f.text_field :pname, autofocus: true, class: 'form-control' %>
         </div>
         <div class="field">
           <%= f.submit "Update", class: 'btn btn-success' %>

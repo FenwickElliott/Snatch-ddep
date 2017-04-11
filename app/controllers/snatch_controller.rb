@@ -13,11 +13,17 @@ class SnatchController < ApplicationController
     else
       puts "not signed in"
     end
-
-    # current_user[:p_name] = 'New'
   end
 
   def options
+  end
+
+  def update
+    if params[:user][:pname]
+      current_user[:pname] = params[:user][:pname]
+      current_user.save!
+    end
+    redirect_to options_path
   end
 
   def link
@@ -112,6 +118,7 @@ class SnatchController < ApplicationController
       flash[:alert] = "Unfortunately that didn't work. Not sure why...'"
     end
     puts "actually_snatch complete"
+    redirect_to root_path
   end
 
   def check_through_playlist
@@ -121,6 +128,7 @@ class SnatchController < ApplicationController
       if playlist['items'][i]['track']['uri'] === session[:s_uri]
         puts "That song has already been snatched"
         flash[:alert] = "Silly goat, #{session[:s_name]} has already been snatched"
+        redirect_to root_path
         return
       end
     end
