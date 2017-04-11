@@ -14,3 +14,9 @@
     <div class="col-md-6 col-md-offset-3">In order to use this service you must first create an account or sign in. Then allow Snatch access to your spotify account by linking it. That's it. Just press the button!</div>
   </div>
 </div>
+
+<br />
+
+<% if current_user %>
+  <%= current_user.pname %>
+<% end %>

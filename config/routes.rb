@@ -7,6 +7,9 @@ Rails.application.routes.draw do
   get 'snatch/fail'
   get 'snatch/snatch'
 
+  get 'user' => 'snatch#about'
+  put 'user' => 'snatch#options'
+
   get 'snatch' => 'snatch#snatch'
   get 'options' => 'snatch#options'
   get 'link' => 'snatch#link'

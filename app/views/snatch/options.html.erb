@@ -1,2 +1,17 @@
-<h1>Snatch#options</h1>
-<p>Find me in app/views/snatch/options.html.erb</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <h1 class="text-center">Options</h1>
+      <%= form_for( current_user, html: { method: :put }) do |f| %>
+        <%#= form_for current_user do |f| %>
+        <div class="field">
+          <%= f.label :pnmae %><br />
+          <%= f.text_field :pname, autofocus: true %>
+        </div>
+        <div class="field">
+          <%= f.submit "Update", class: 'btn btn-success' %>
+        </div>
+    <% end %>
+    </div>
+  </div>
+</div>

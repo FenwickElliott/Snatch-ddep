@@ -13,6 +13,8 @@ class SnatchController < ApplicationController
     else
       puts "not signed in"
     end
+
+    # current_user[:p_name] = 'New'
   end
 
   def options
@@ -25,7 +27,6 @@ class SnatchController < ApplicationController
       Accept: "application/json",
       Authorization: "Authorization: Bearer #{session[:token]}"
     }
-    session[:p_name] = 'Dummy'
     get_me
     flash[:notice] = "You have sucsessfully linked your Spotify account"
     redirect_to root_path
@@ -60,16 +61,16 @@ class SnatchController < ApplicationController
     if session[:user_id]
       list = JSON.parse RestClient.get("https://api.spotify.com/v1/me/playlists?limit=50", session[:header])
       list['items'].each do |x|
-          if x['name'] === session[:p_name]
+          if x['name'] === current_user[:pname]
             puts x['name'] << ' Playlist found'
             session[:p_id] = x['id']
             return
           end
         end
-        puts "check_for_playlist complete, #{session[:p_name]} not found, creating"
+        puts "check_for_playlist complete, #{current_user[:pname]} not found, creating"
         create_playlist
       end
-      puts "check_for_playlist complete, #{x['name']} found"
+      puts "check_for_playlist complete, #{current_user[:pname]} found"
   end
 
   def create_playlist
@@ -81,7 +82,7 @@ class SnatchController < ApplicationController
     request.body = JSON.dump({
       "description" => "Your Snatched Playlist",
       "public" => false,
-      "name" => "#{session[:p_name]}"
+      "name" => "#{current_user[:pname]}"
     })
     req_options = {
       use_ssl: uri.scheme == "https",
@@ -91,7 +92,7 @@ class SnatchController < ApplicationController
     end
     playlist = JSON.parse response.body
     session[:p_id] = playlist['id']
-    puts "create_playlist complete #{session[:p_name]} playlist created. ID: #{session[:p_id]}"
+    puts "create_playlist complete #{current_user[:pname]} playlist created. ID: #{session[:p_id]}"
   end
 
   def actually_snatch
@@ -106,7 +107,7 @@ class SnatchController < ApplicationController
       http.request(request)
     end
     if response.code == '201'
-      flash[:notice] = "#{session[:s_name]} was sucsessfully added to #{session[:p_name]}"
+      flash[:notice] = "#{session[:s_name]} was sucsessfully added to #{current_user[:pname]}"
     else
       flash[:alert] = "Unfortunately that didn't work. Not sure why...'"
     end
@@ -119,7 +120,7 @@ class SnatchController < ApplicationController
     for i in 0..(playlist['items'].length - 1)
       if playlist['items'][i]['track']['uri'] === session[:s_uri]
         puts "That song has already been snatched"
-        flash[:alert] = "Silly goat, that song has already been snatched"
+        flash[:alert] = "Silly goat, #{session[:s_name]} has already been snatched"
         return
       end
     end
