@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   get 'options' => 'snatch#options'
   get 'link' => 'snatch#link'
   get 'fail' => 'snatch#fail'
+  # get 'user/root' => 'snatch#link'
 
   get '/auth/:provider/callback', to: 'snatch#link'
   get '/auth/failure' , to: 'snatch#fail'

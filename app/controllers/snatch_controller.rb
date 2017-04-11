@@ -5,6 +5,14 @@ class SnatchController < ApplicationController
   require 'uri'
 
   def about
+    if user_signed_in?
+      puts "signed in"
+      unless session[:user_id]
+        puts "redirect_to link_path"
+      end
+    else
+      puts "not signed in"
+    end
   end
 
   def options
@@ -17,8 +25,10 @@ class SnatchController < ApplicationController
       Accept: "application/json",
       Authorization: "Authorization: Bearer #{session[:token]}"
     }
-    session[:p_name] = 'Snatched'
+    session[:p_name] = 'Dummy'
     get_me
+    flash[:notice] = "You have sucsessfully linked your Spotify account"
+    redirect_to root_path
   end
 
   def fail
@@ -29,16 +39,21 @@ class SnatchController < ApplicationController
   end
 
   def get_me
-    user = JSON.parse RestClient.get("https://api.spotify.com/v1/me", session[:header])
-    session[:user_id] = user['id']
+    begin
+      user = JSON.parse RestClient.get("https://api.spotify.com/v1/me", session[:header])
+      session[:user_id] = user['id']
+      puts "get_me complete, got #{session[:user_id]}"
+    rescue
+      puts "couldn't access spotify api"
+      flash[:alert] = "I'm sorry, we couldn't access the Spotify API, which is problematic..."
+    end
   end
 
   def get_song
-    if session[:user_id]
       song = JSON.parse RestClient.get("https://api.spotify.com/v1/me/player/currently-playing", session[:header])
       session[:s_uri] = song['item']['uri']
-      puts "got song: #{session[:s_uri]}"
-    end
+      session[:s_name] = song['item']['name']
+    puts "get_song complete, got #{session[:s_name]}"
   end
 
   def check_for_playlist
@@ -51,8 +66,10 @@ class SnatchController < ApplicationController
             return
           end
         end
+        puts "check_for_playlist complete, #{session[:p_name]} not found, creating"
         create_playlist
       end
+      puts "check_for_playlist complete, #{x['name']} found"
   end
 
   def create_playlist
@@ -74,7 +91,7 @@ class SnatchController < ApplicationController
     end
     playlist = JSON.parse response.body
     session[:p_id] = playlist['id']
-    puts "#{session[:p_name]} playlist created. ID: #{session[:p_id]}"
+    puts "create_playlist complete #{session[:p_name]} playlist created. ID: #{session[:p_id]}"
   end
 
   def actually_snatch
@@ -88,6 +105,12 @@ class SnatchController < ApplicationController
     response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
       http.request(request)
     end
+    if response.code == '201'
+      flash[:notice] = "#{session[:s_name]} was sucsessfully added to #{session[:p_name]}"
+    else
+      flash[:alert] = "Unfortunately that didn't work. Not sure why...'"
+    end
+    puts "actually_snatch complete"
   end
 
   def check_through_playlist
@@ -96,10 +119,11 @@ class SnatchController < ApplicationController
     for i in 0..(playlist['items'].length - 1)
       if playlist['items'][i]['track']['uri'] === session[:s_uri]
         puts "That song has already been snatched"
-        flash[:notice] = "Silly goat, that song has already been snatched"
+        flash[:alert] = "Silly goat, that song has already been snatched"
         return
       end
     end
+    puts "check_through_playlist complete"
     actually_snatch
   end
   
