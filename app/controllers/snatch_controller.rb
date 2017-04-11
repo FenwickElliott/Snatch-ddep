@@ -96,6 +96,7 @@ class SnatchController < ApplicationController
     for i in 0..(playlist['items'].length - 1)
       if playlist['items'][i]['track']['uri'] === session[:s_uri]
         puts "That song has already been snatched"
+        flash[:notice] = "Silly goat, that song has already been snatched"
         return
       end
     end
