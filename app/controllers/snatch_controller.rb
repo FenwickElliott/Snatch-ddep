@@ -16,11 +16,13 @@ class SnatchController < ApplicationController
   end
 
   def options
+    session[:pname] = current_user[:pname]
   end
 
   def update
-    if params[:user][:pname]
-      current_user[:pname] = params[:user][:pname]
+    if params[:session][:pname] != ''
+      puts "update!!!"
+      current_user[:pname] = params[:session][:pname]
       current_user.save!
     end
     redirect_to options_path
