@@ -116,6 +116,7 @@ GEM
     omniauth-spotify-oauth2 (1.0.1)
       omniauth-oauth2 (~> 1.4)
     orm_adapter (0.5.0)
+    pg (0.20.0)
     rack (2.0.1)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -198,6 +199,7 @@ DEPENDENCIES
   json
   listen
   omniauth-spotify-oauth2
+  pg
   rails (~> 5.0.2)
   rest-client
   sass-rails

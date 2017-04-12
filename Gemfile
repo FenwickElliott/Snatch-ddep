@@ -7,10 +7,15 @@ end
 
 gem 'rails', '~> 5.0.2'
 
-gem 'sqlite3'
-gem 'listen'
+group :production do
+  gem 'pg'
+end
 
-gem 'json'
+group :development do
+  gem 'sqlite3'
+  gem 'listen'
+end
+
 gem 'sass-rails'
 gem 'uglifier'
 gem 'coffee-rails'
