@@ -7,22 +7,16 @@ end
 
 gem 'rails', '~> 5.0.2'
 
-group :production do
-  gem 'pg'
-end
+gem 'sqlite3'
+gem 'listen'
 
-group :development do
-  gem 'sqlite3'
-  gem 'listen'
-end
-
+gem 'json'
 gem 'sass-rails'
 gem 'uglifier'
 gem 'coffee-rails'
 gem 'jquery-rails'
 gem 'turbolinks'
 gem 'bootstrap-sass'
-gem 'bootstrap'
 gem 'omniauth-spotify-oauth2'
 gem 'rest-client'
 gem 'json'
