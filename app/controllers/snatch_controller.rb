@@ -1,6 +1,6 @@
 class SnatchController < ApplicationController
   require 'rest-client'
-  require 'JSON'
+  require 'json'
   require 'net/http'
   require 'uri'
 
