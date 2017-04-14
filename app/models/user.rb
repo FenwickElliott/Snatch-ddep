@@ -4,8 +4,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  before_create :default_pname
-  def default_pname
-    self.pname ||= "Snatched"
+  before_create :default_playlist_name
+  def default_playlist_name
+    self.p_name ||= "Snatched"
   end
 end

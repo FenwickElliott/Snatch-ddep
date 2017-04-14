@@ -16,12 +16,12 @@ class SnatchController < ApplicationController
   end
 
   def options
-    session[:pname] = current_user[:pname]
+    session[:p_name] = current_user[:p_name]
   end
 
   def update
-    if params[:session][:pname] != ''
-      current_user[:pname] = params[:session][:pname]
+    if params[:session][:p_name] != ''
+      current_user[:p_name] = params[:session][:p_name]
       current_user.save!
     end
     redirect_to options_path
@@ -97,31 +97,31 @@ class SnatchController < ApplicationController
     if session[:user_id]
       list = get('me/playlists?limit=50')
       list['items'].each do |x|
-          if x['name'] === current_user[:pname]
+          if x['name'] === current_user[:p_name]
             puts x['name'] << ' Playlist found'
             session[:p_id] = x['id']
             return
           end
         end
-        puts "check_for_playlist complete, #{current_user[:pname]} not found, creating"
+        puts "check_for_playlist complete, #{current_user[:p_name]} not found, creating"
         create_playlist
       end
-      puts "check_for_playlist complete, #{current_user[:pname]} found"
+      puts "check_for_playlist complete, #{current_user[:p_name]} found"
   end
 
   def create_playlist
     playlist = post("users/#{session[:user_id]}/playlists", {
       "description" => "Your Snatched Playlist",
       "public" => false,
-      "name" => "#{current_user[:pname]}"
+      "name" => "#{current_user[:p_name]}"
     })
     session[:p_id] = playlist['id']
-    puts "create_playlist complete #{current_user[:pname]} playlist created. ID: #{session[:p_id]}"
+    puts "create_playlist complete #{current_user[:p_name]} playlist created. ID: #{session[:p_id]}"
   end
 
   def actually_snatch
     post("users/#{session[:user_id]}/playlists/#{session[:p_id]}/tracks?uris=#{session[:s_uri]}")
-    flash[:notice] = "#{session[:s_name]} was sucsessfully added to #{current_user[:pname]}"
+    flash[:notice] = "#{session[:s_name]} was sucsessfully added to #{current_user[:p_name]}"
     puts "actually_snatch complete"
     redirect_to root_path
   end

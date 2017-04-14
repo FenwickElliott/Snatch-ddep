@@ -6,7 +6,7 @@
       <%= form_for( :session, html: { method: :put }) do |f| %>
         <div class="field">
           <%= f.label 'Playlist name:' %><br />
-          <%= f.text_field :pname, autofocus: true, placeholder: "#{session[:pname]}",  class: 'form-control' %>
+          <%= f.text_field :p_name, autofocus: true, placeholder: "#{session[:p_name]}",  class: 'form-control' %>
         </div>
         <br />
         <div class="field">
