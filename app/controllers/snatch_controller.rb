@@ -28,7 +28,6 @@ class SnatchController < ApplicationController
   end
 
   def link
-
     if session[:pname] = ""
       session[:pname] = "Snatched"
       session.save!
