@@ -28,11 +28,6 @@ class SnatchController < ApplicationController
   end
 
   def link
-    if session[:pname] = ""
-      session[:pname] = "Snatched"
-      session.save!
-    end
-
     session[:response] = request.env['omniauth.auth']
     session[:token] = session[:response][:credentials][:token]
     session[:header] = {
