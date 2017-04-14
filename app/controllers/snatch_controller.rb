@@ -1,5 +1,5 @@
 class SnatchController < ApplicationController
-  require 'rest-client'
+  # require 'rest-client'
   require 'json'
   require 'net/http'
   require 'uri'
@@ -9,6 +9,7 @@ class SnatchController < ApplicationController
       puts "signed in"
       unless session[:user_id]
         puts "redirect_to link_path"
+        # redirect_to link_path
       end
     else
       puts "not signed in"
@@ -47,11 +48,18 @@ class SnatchController < ApplicationController
     snatch
   end
 
+  def get(endpoint)
+    JSON.parse RestClient.get("https://api.spotify.com/v1/#{endpoint}", session[:header])
+  end
+
+
   def get_me
     begin
-      user = JSON.parse RestClient.get("https://api.spotify.com/v1/me", session[:header])
+      # user = JSON.parse RestClient.get("https://api.spotify.com/v1/me", session[:header])
+      user = get('me')
       session[:user_id] = user['id']
       puts "get_me complete, got #{session[:user_id]}"
+
     rescue
       puts "couldn't access spotify api"
       flash[:alert] = "I'm sorry, we couldn't access the Spotify API, which is problematic..."
@@ -59,7 +67,8 @@ class SnatchController < ApplicationController
   end
 
   def get_song
-      song = JSON.parse RestClient.get("https://api.spotify.com/v1/me/player/currently-playing", session[:header])
+      # song = JSON.parse RestClient.get("https://api.spotify.com/v1/me/player/currently-playing", session[:header])
+      song = get('me/player/currently-playing')
       session[:s_uri] = song['item']['uri']
       session[:s_name] = song['item']['name']
     puts "get_song complete, got #{session[:s_name]}"
@@ -67,7 +76,8 @@ class SnatchController < ApplicationController
 
   def check_for_playlist
     if session[:user_id]
-      list = JSON.parse RestClient.get("https://api.spotify.com/v1/me/playlists?limit=50", session[:header])
+      # list = JSON.parse RestClient.get("https://api.spotify.com/v1/me/playlists?limit=50", session[:header])
+      list = get('me/playlists?limit=50')
       list['items'].each do |x|
           if x['name'] === current_user[:pname]
             puts x['name'] << ' Playlist found'
@@ -124,7 +134,8 @@ class SnatchController < ApplicationController
   end
 
   def check_through_playlist
-    playlist = JSON.parse RestClient.get("https://api.spotify.com/v1/users/#{session[:user_id]}/playlists/#{session[:p_id]}/tracks", session[:header])
+    # playlist = JSON.parse RestClient.get("https://api.spotify.com/v1/users/#{session[:user_id]}/playlists/#{session[:p_id]}/tracks", session[:header])
+    playlist = get("users/#{session[:user_id]}/playlists/#{session[:p_id]}/tracks")
 
     for i in 0..(playlist['items'].length - 1)
       if playlist['items'][i]['track']['uri'] === session[:s_uri]
