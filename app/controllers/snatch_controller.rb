@@ -52,6 +52,24 @@ class SnatchController < ApplicationController
     JSON.parse RestClient.get("https://api.spotify.com/v1/#{endpoint}", session[:header])
   end
 
+  def post(endpoint, body = {})
+        uri = URI.parse("https://api.spotify.com/v1/#{endpoint}")
+    request = Net::HTTP::Post.new(uri)
+    request.content_type = "application/json"
+    request["Accept"] = "application/json"
+    request["Authorization"] = "Bearer #{session[:token]}"
+    request.body = JSON.dump body
+    req_options = {
+      use_ssl: uri.scheme == "https",
+    }
+    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+      http.request(request)
+    end
+
+    session[:response][:code] = response[:code]
+    JSON.parse response.body
+  end
+
 
   def get_me
     begin
@@ -92,43 +110,53 @@ class SnatchController < ApplicationController
   end
 
   def create_playlist
-    uri = URI.parse("https://api.spotify.com/v1/users/#{session[:user_id]}/playlists")
-    request = Net::HTTP::Post.new(uri)
-    request.content_type = "application/json"
-    request["Accept"] = "application/json"
-    request["Authorization"] = "Bearer #{session[:token]}"
-    request.body = JSON.dump({
+    # uri = URI.parse("https://api.spotify.com/v1/users/#{session[:user_id]}/playlists")
+    # request = Net::HTTP::Post.new(uri)
+    # request.content_type = "application/json"
+    # request["Accept"] = "application/json"
+    # request["Authorization"] = "Bearer #{session[:token]}"
+    # request.body = JSON.dump({
+    #   "description" => "Your Snatched Playlist",
+    #   "public" => false,
+    #   "name" => "#{current_user[:pname]}"
+    # })
+    # req_options = {
+    #   use_ssl: uri.scheme == "https",
+    # }
+    # response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+    #   http.request(request)
+    # end
+
+
+    playlist = post("users/#{session[:user_id]}/playlists", {
       "description" => "Your Snatched Playlist",
       "public" => false,
       "name" => "#{current_user[:pname]}"
     })
-    req_options = {
-      use_ssl: uri.scheme == "https",
-    }
-    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
-      http.request(request)
-    end
-    playlist = JSON.parse response.body
+
     session[:p_id] = playlist['id']
     puts "create_playlist complete #{current_user[:pname]} playlist created. ID: #{session[:p_id]}"
   end
 
   def actually_snatch
-    uri = URI.parse("https://api.spotify.com/v1/users/#{session[:user_id]}/playlists/#{session[:p_id]}/tracks?uris=#{session[:s_uri]}")
-    request = Net::HTTP::Post.new(uri)
-    request["Accept"] = "application/json"
-    request["Authorization"] = "Bearer #{session[:token]}"
-    req_options = {
-      use_ssl: uri.scheme == "https",
-    }
-    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
-      http.request(request)
-    end
-    if response.code == '201'
+    # uri = URI.parse("https://api.spotify.com/v1/users/#{session[:user_id]}/playlists/#{session[:p_id]}/tracks?uris=#{session[:s_uri]}")
+    # request = Net::HTTP::Post.new(uri)
+    # request["Accept"] = "application/json"
+    # request["Authorization"] = "Bearer #{session[:token]}"
+    # req_options = {
+    #   use_ssl: uri.scheme == "https",
+    # }
+    # response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+    #   http.request(request)
+    # end
+
+    post("users/#{session[:user_id]}/playlists/#{session[:p_id]}/tracks?uris=#{session[:s_uri]}")
+
+    # if session[:response][:code] == '201'
       flash[:notice] = "#{session[:s_name]} was sucsessfully added to #{current_user[:pname]}"
-    else
-      flash[:alert] = "Unfortunately that didn't work. Not sure why...'"
-    end
+    # else
+    #   flash[:alert] = "Unfortunately that didn't work. Not sure why...'"
+    # end
     puts "actually_snatch complete"
     redirect_to root_path
   end
