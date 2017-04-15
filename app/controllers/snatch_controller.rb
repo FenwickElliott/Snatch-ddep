@@ -4,15 +4,6 @@ class SnatchController < ApplicationController
   require 'uri'
 
   def about
-    if user_signed_in?
-      puts "signed in"
-      unless session[:user_id]
-        puts "redirect_to link_path"
-        # redirect_to link_path
-      end
-    else
-      puts "not signed in"
-    end
   end
 
   def options
