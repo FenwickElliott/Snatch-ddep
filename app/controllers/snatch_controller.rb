@@ -29,7 +29,6 @@ class SnatchController < ApplicationController
       Authorization: "Authorization: Bearer #{session[:token]}"
     }
     get_me
-    flash[:notice] = "You have sucsessfully linked your Spotify account. You are ready to go!"
     # redirect_to root_path
     snatch
   end
@@ -132,6 +131,7 @@ class SnatchController < ApplicationController
 
   def actually_snatch
     post("users/#{session[:user_id]}/playlists/#{session[:p_id]}/tracks?uris=#{session[:s_uri]}")
+    flash[:notice] = "#{session[:s_name]} was sucsessfully added to #{session[:p_name]}"
   end
 
   def check_through_playlist
