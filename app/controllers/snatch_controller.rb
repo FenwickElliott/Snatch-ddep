@@ -7,7 +7,6 @@ class SnatchController < ApplicationController
   end
 
   def options
-
     session[:p_name] = current_user[:p_name]
   end
 
@@ -45,6 +44,7 @@ class SnatchController < ApplicationController
       check_for_playlist
       check_through_playlist
       # actually_snatch
+      redirect_to root_path
     rescue
       # redirect_to root_path
     end
@@ -132,9 +132,6 @@ class SnatchController < ApplicationController
 
   def actually_snatch
     post("users/#{session[:user_id]}/playlists/#{session[:p_id]}/tracks?uris=#{session[:s_uri]}")
-    flash[:notice] = "#{session[:s_name]} was sucsessfully added to #{session[:p_name]}"
-    puts "actually_snatch complete"
-    redirect_to root_path
   end
 
   def check_through_playlist
