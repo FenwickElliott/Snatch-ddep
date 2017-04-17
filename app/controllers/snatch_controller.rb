@@ -31,7 +31,12 @@ class SnatchController < ApplicationController
   end
 
   def snatch
-    snatch
+
+    get_me
+    get_song
+    check_for_playlist
+    check_through_playlist
+    # actually_snatch
   end
 
   def get(endpoint)
@@ -87,8 +92,12 @@ class SnatchController < ApplicationController
   def check_for_playlist
     if session[:user_id]
       list = get('me/playlists?limit=50')
+      unless current_user
+        session[:p_name] = "Snatched"
+      end
       list['items'].each do |x|
-          if x['name'] === current_user[:p_name]
+          if x['name'] === session[:p_name]
+
             puts x['name'] << ' Playlist found'
             session[:p_id] = x['id']
             return
@@ -112,7 +121,7 @@ class SnatchController < ApplicationController
 
   def actually_snatch
     post("users/#{session[:user_id]}/playlists/#{session[:p_id]}/tracks?uris=#{session[:s_uri]}")
-    flash[:notice] = "#{session[:s_name]} was sucsessfully added to #{current_user[:p_name]}"
+    flash[:notice] = "#{session[:s_name]} was sucsessfully added to #{session[:p_name]}"
     puts "actually_snatch complete"
     redirect_to root_path
   end
@@ -129,13 +138,5 @@ class SnatchController < ApplicationController
     end
     puts "check_through_playlist complete"
     actually_snatch
-  end
-  
-  def snatch
-    get_me
-    get_song
-    check_for_playlist
-    check_through_playlist
-    # actually_snatch
   end
 end
