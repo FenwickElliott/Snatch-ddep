@@ -7,6 +7,7 @@ class SnatchController < ApplicationController
   end
 
   def options
+
     session[:p_name] = current_user[:p_name]
   end
 
@@ -19,6 +20,9 @@ class SnatchController < ApplicationController
   end
 
   def link
+    unless session[:token]
+      redirect_to "/auth/spotify"
+    end
     session[:response] = request.env['omniauth.auth']
     session[:token] = session[:response][:credentials][:token]
     session[:header] = {
@@ -27,10 +31,14 @@ class SnatchController < ApplicationController
     }
     get_me
     flash[:notice] = "You have sucsessfully linked your Spotify account. You are ready to go!"
-    redirect_to root_path
+    # redirect_to root_path
+    snatch
   end
 
   def snatch
+    unless session[:token]
+      redirect_to "/auth/spotify"
+    end
     begin
       get_me
       get_song
@@ -38,7 +46,7 @@ class SnatchController < ApplicationController
       check_through_playlist
       # actually_snatch
     rescue
-      redirect_to root_path
+      # redirect_to root_path
     end
   end
 
