@@ -26,17 +26,20 @@ class SnatchController < ApplicationController
       Authorization: "Authorization: Bearer #{session[:token]}"
     }
     get_me
-    flash[:notice] = "You have sucsessfully linked your Spotify account"
+    flash[:notice] = "You have sucsessfully linked your Spotify account. You are ready to go!"
     redirect_to root_path
   end
 
   def snatch
-
-    get_me
-    get_song
-    check_for_playlist
-    check_through_playlist
-    # actually_snatch
+    begin
+      get_me
+      get_song
+      check_for_playlist
+      check_through_playlist
+      # actually_snatch
+    rescue
+      redirect_to root_path
+    end
   end
 
   def get(endpoint)
